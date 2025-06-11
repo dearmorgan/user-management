@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",                  // รองรับ async/await และ module ใหม่
+    "module": "commonjs",                // ใช้ร่วมกับ Node.js/Express
+    "rootDir": "./src",                  // ไฟล์ต้นทางอยู่ใน src/
+    "outDir": "./dist",                  // ไฟล์ build จะไปอยู่ที่ dist/
+    "strict": true,                      // เปิดการตรวจสอบ Type อย่างเข้มงวด
+    "esModuleInterop": true,            // รองรับ import express แบบ default
+    "skipLibCheck": true,                // ข้ามตรวจ .d.ts เพื่อให้ compile เร็วขึ้น
+    "forceConsistentCasingInFileNames": true, // ช่วยป้องกันปัญหา import พิมพ์ชื่อผิดตัวพิมพ์เล็ก/ใหญ่
+    "resolveJsonModule": true,          // ให้ import .json ได้
+    "moduleResolution": "node",         // ใช้แบบ resolution ของ Node
+    "allowJs": true                      // เผื่อคุณต้องการใช้ JS ผสม
+  },
+  "include": ["src"],                    // คอมไพล์เฉพาะโค้ดใน src/
+  "exclude": ["node_modules", "dist"]   // ไม่คอมไพล์ไฟล์ build และ dependencies
+}
