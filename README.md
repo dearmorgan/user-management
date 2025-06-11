@@ -1,9 +1,9 @@
-# 🧑‍💼 User Management System
+#  User Management System
 
 ระบบจัดการผู้ใช้งานแบบ Full Stack  
 รองรับ **Authentication + Role-based Authorization** (Admin / Viewer)
 
-## ✅ Features
+##  Features
 
 - Login / Register
 - แสดงรายชื่อผู้ใช้งาน
@@ -17,7 +17,7 @@
 
 ---
 
-## 📦 Technologies
+##  Technologies
 
 | Layer      | Stack                              |
 |------------|-------------------------------------|
@@ -28,9 +28,9 @@
 
 ---
 
-## 🧩 Installation (แยก 2 ส่วน)
+##  Installation (แยก 2 ส่วน)
 
-### 1️⃣ Backend
+### 1 Backend
 
 ```bash
 cd user-management-backend
@@ -40,7 +40,7 @@ npx prisma migrate dev --name init
 npm run dev
 ```
 
-### 2️⃣ Frontend
+### 2 Frontend
 
 ```bash
 cd user-management-frontend
@@ -48,7 +48,7 @@ npm install
 npm run dev
 ```
 
-> 🔐 `.env` ต้องตั้งค่าดังนี้ในทั้ง 2 โปรเจกต์
+>  `.env` ต้องตั้งค่าดังนี้ในทั้ง 2 โปรเจกต์
 
 **Backend `.env`**
 ```env
@@ -63,7 +63,7 @@ NEXT_PUBLIC_API_URL="http://localhost:5000"
 
 ---
 
-## 🧪 Default Roles
+##  Default Roles
 
 | Email              | Password    | Role   |
 |--------------------|-------------|--------|
@@ -72,7 +72,7 @@ NEXT_PUBLIC_API_URL="http://localhost:5000"
 
 ---
 
-## 🐳 (Optional) Docker Support
+##  (Optional) Docker Support
 
 > คุณสามารถสร้าง `docker-compose.yml` สำหรับ backend + db ได้ง่าย ๆ เช่น:
 ```yaml
