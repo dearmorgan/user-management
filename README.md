@@ -5,54 +5,57 @@
 
 ##  Features
 
-- Login / Register
-- แสดงรายชื่อผู้ใช้งาน
-- Admin:
-  - เพิ่ม/ลบ/แก้ไข ผู้ใช้
-- Viewer:
-  - ดูได้อย่างเดียว
-- ปุ่ม Logout
-- แสดง UI ตามสิทธิ์
-- เขียนด้วย: `TypeScript`, `Next.js`, `Express`, `Prisma`, `MySQL`
-
+-  Register / Login (JWT-based)
+-  แสดงรายชื่อผู้ใช้ทั้งหมด (หน้า `/users`)
+-  Role-based UI (Admin / Viewer)
+-  เพิ่ม / ลบ / แก้ไขผู้ใช้ (เฉพาะ Admin)
+-  เปลี่ยน Role ของผู้ใช้ (Admin เท่านั้น)
+-  Logout
+-  Responsive UI (Tailwind CSS)
 ---
 
 ##  Technologies
 
-| Layer      | Stack                              |
-|------------|-------------------------------------|
-| Frontend   | Next.js 14, Tailwind CSS, React     |
-| Backend    | Express.js, TypeScript              |
-| Database   | MySQL + Prisma ORM                  |
-| Auth       | JWT (Token-based)                   |
+| Layer     | Tech                              |
+|-----------|-----------------------------------|
+| Frontend  | Next.js 14, React, Tailwind CSS   |
+| Backend   | Express.js, TypeScript            |
+| Database  | MySQL (Prisma ORM)                |
+| Auth      | JWT (Token-based Auth)            |
+| Docker    | Docker + Docker Compose           |
+| Package   | pnpm (ใช้แทน npm/yarn)            |
 
 ---
 
-##  Installation (แยก 2 ส่วน)
+##  วิธีติดตั้งและใช้งาน
 
+###  ติดตั้ง pnpm ก่อน (ถ้ายังไม่มี)
+
+```bash
+npm install -g pnpm
 ### 1 Backend
 
 ```bash
 cd user-management-backend
-npm install
+pnpm install
 npx prisma generate
 npx prisma migrate dev --name init
-npm run dev
+pnpm dev
 ```
 
 ### 2 Frontend
 
 ```bash
 cd user-management-frontend
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```
 
 >  `.env` ต้องตั้งค่าดังนี้ในทั้ง 2 โปรเจกต์
 
 **Backend `.env`**
 ```env
-DATABASE_URL="mysql://root:password@localhost:3306/userdb"
+DATABASE_URL="mysql://root:root@localhost:3306/userdb"
 JWT_SECRET="super-secret-code"
 ```
 
@@ -62,6 +65,14 @@ NEXT_PUBLIC_API_URL="http://localhost:5000"
 ```
 
 ---
+วิธีรันด้วย Docker (แนะนำ)
+วางไฟล์ docker-compose.yml ไว้ที่โฟลเดอร์ user-management/
+คำสั่งรัน:
+```bash
+docker compose up --build
+คำสั่งหยุด:
+```bash
+docker compose down -v
 
 ##  Default Roles
 
@@ -72,22 +83,39 @@ NEXT_PUBLIC_API_URL="http://localhost:5000"
 
 ---
 
-##  (Optional) Docker Support
+##  docker-compose.yml ตัวอย่าง (รวม backend, frontend, db)
 
-> คุณสามารถสร้าง `docker-compose.yml` สำหรับ backend + db ได้ง่าย ๆ เช่น:
 ```yaml
-# ตัวอย่างโครงสร้างเบื้องต้น (ยังไม่รวม frontend)
-version: "3.9"
+
 services:
-  mysql:
+  db:
     image: mysql:8
     ports:
       - "3306:3306"
     environment:
-      MYSQL_ROOT_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: userdb
     volumes:
       - mysql_data:/var/lib/mysql
+
+  backend:
+    build: ./user-management-backend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: mysql://root:root@db:3306/userdb
+      JWT_SECRET: super-secret-code
+
+  frontend:
+    build: ./user-management-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:5000
+    depends_on:
+      - backend
 
 volumes:
   mysql_data:
