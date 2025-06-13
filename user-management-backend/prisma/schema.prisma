@@ -7,16 +7,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator seed {
+  provider = "ts-node"
+  output   = "./prisma/seedroles.ts"
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
   password  String
-  role      Role     @default(USER)
   createdAt DateTime @default(now())
+
+  roleId Int
+  role   Role        @relation(fields: [roleId], references: [id])
 }
 
-enum Role {
-  ADMIN
-  USER
+model Role {
+  id    Int     @id @default(autoincrement())
+  code  String  @unique        
+  name  String
+
+  users        User[]
+  permissions  RolePermission[]
+}
+
+model Permission {
+  id    Int     @id @default(autoincrement())
+  code  String  @unique
+  name  String
+
+  rolePermissions RolePermission[]
+}
+
+model RolePermission {
+  id           Int        @id @default(autoincrement())
+  roleId       Int
+  permissionId Int
+
+  role       Role       @relation(fields: [roleId], references: [id])
+  permission Permission @relation(fields: [permissionId], references: [id])
+
+  @@unique([roleId, permissionId]) //  ป้องกันซ้ำ
 }

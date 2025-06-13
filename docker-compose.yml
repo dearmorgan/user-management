@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8
+    container_name: mysql-db
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: userdb
+    volumes:
+      - mysql-data:/var/lib/mysql
+
+  backend:
+    build: ./user-management-backend
+    container_name: backend-app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    volumes:
+      - ./user-management-backend:/app
+      - /app/node_modules 
+    environment:
+      DATABASE_URL: mysql://root:root@db:3306/userdb
+      JWT_SECRET: mysecretkey
+
+  frontend:
+    build: ./user-management-frontend
+    container_name: frontend-app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    volumes:
+      - ./user-management-frontend:/app
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:5000
+
+volumes:
+  mysql-data:

@@ -7,7 +7,7 @@ import { useRouter, useParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 
-// 🧩 validation schema
+// ✅ Schema สำหรับตรวจสอบฟอร์ม
 const schema = z.object({
   name: z.string().min(1, { message: "กรุณากรอกชื่อ" }),
   email: z.string().email({ message: "อีเมลไม่ถูกต้อง" }),
@@ -22,11 +22,16 @@ export default function EditUserPage() {
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(true)
 
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormData>({
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<FormData>({
     resolver: zodResolver(schema),
   })
 
-  // 🚀 โหลดข้อมูลผู้ใช้คนนี้
+  // ✅ โหลดข้อมูลผู้ใช้
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -41,9 +46,12 @@ export default function EditUserPage() {
         if (user) {
           setValue('name', user.name)
           setValue('email', user.email)
-          setValue('role', user.role)
+          setValue('role', user.role.code) // ✅ แก้ตรงนี้ให้ใช้ code
+        } else {
+          setError("ไม่พบผู้ใช้")
         }
       } catch (err) {
+        console.error("โหลดข้อมูลไม่สำเร็จ", err)
         setError("โหลดข้อมูลไม่สำเร็จ")
       } finally {
         setLoading(false)
@@ -53,6 +61,7 @@ export default function EditUserPage() {
     fetchUser()
   }, [id, setValue])
 
+  // ✅ เมื่อกด submit ฟอร์ม
   const onSubmit = async (data: FormData) => {
     try {
       const token = localStorage.getItem("token")
@@ -61,11 +70,12 @@ export default function EditUserPage() {
       await axios.put(`${apiUrl}/api/users/${id}`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
-        }
+        },
       })
 
       router.push('/users')
     } catch (err) {
+      console.error("ไม่สามารถบันทึกข้อมูลได้", err)
       setError("ไม่สามารถบันทึกข้อมูลได้")
     }
   }
@@ -75,23 +85,34 @@ export default function EditUserPage() {
       <h1 className="text-2xl font-bold mb-4 text-center">แก้ไขผู้ใช้</h1>
 
       {error && <p className="text-red-500 mb-2">{error}</p>}
-      {loading ? <p>กำลังโหลด...</p> : (
+      {loading ? (
+        <p>กำลังโหลด...</p>
+      ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label className="block mb-1">ชื่อ</label>
-            <input {...register("name")} className="w-full border px-3 py-2 rounded" />
+            <input
+              {...register("name")}
+              className="w-full border px-3 py-2 rounded"
+            />
             {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
           </div>
 
           <div>
             <label className="block mb-1">อีเมล</label>
-            <input {...register("email")} className="w-full border px-3 py-2 rounded" />
+            <input
+              {...register("email")}
+              className="w-full border px-3 py-2 rounded"
+            />
             {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
           </div>
 
           <div>
             <label className="block mb-1">สิทธิ์</label>
-            <select {...register("role")} className="w-full border px-3 py-2 rounded">
+            <select
+              {...register("role")}
+              className="w-full border px-3 py-2 rounded"
+            >
               <option value="USER">USER</option>
               <option value="ADMIN">ADMIN</option>
             </select>
